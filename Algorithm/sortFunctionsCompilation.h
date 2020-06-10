@@ -5,7 +5,10 @@ void arrayPrint(int* arr, int length, char* des);
 int* selectionSort(int* arr, int length);
 int* bubbleSort(int* arr, int length);
 int* insertionSort(int* arr, int length);
+int* insertionSort2(int* arr, int length);
 void quickSort(int* arr, int start, int end);
+void merge(int* arr, int start, int mid, int end);
+void mergeSort(int* arr, int start, int end);
 
 void arrayPrint(int* arr, int length, char* des) {
 	int i;
@@ -71,7 +74,7 @@ int* bubbleSort(int* arr, int length)
 
 int* insertionSort(int* arr, int length)
 {
-	int i, j, k, key, fork;
+	int i, j, key, fork;
 
 	for (i = 1; i < length; i++) { //삽입 정렬은 두 번째 자료형부터 시작. ( 0이 아닌 1부터)
 		key = arr[i]; //비교가 될 기준 값
@@ -89,12 +92,12 @@ int* insertionSort(int* arr, int length)
 				fork = j + 1;
 				break;
 			}
-			
+
 			if (arr[j] > key) {
 				arr[j + 1] = arr[j];
 				fork = j;
 			}
-			
+
 		}
 
 		// 저장된 위치에 '기준 값'을 저장한다.
@@ -111,6 +114,26 @@ int* insertionSort(int* arr, int length)
 }
 
 
+int* insertionSort2(int* arr, int length)
+{
+	int i, j, temp;
+
+	for (i = 1; i < length; i++)
+	{
+		j = i - 1;
+		while (j >= 0 && arr[j] > arr[j + 1])
+		{
+			temp = arr[j + 1];
+			arr[j + 1] = arr[j];
+			arr[j] = temp;
+			j--;
+		}
+	}
+
+	return arr;
+}
+
+
 //퀵 소트
 //(배열, 시작 인덱스, 마지막 인덱스)
 void quickSort(int* arr, int start, int end) {
@@ -120,31 +143,31 @@ void quickSort(int* arr, int start, int end) {
 	//left 왼쪽부터 큰 값을 찾는 인덱스
 	int left;
 	//rigth 오른쪽부터 작은 값을 찾는 인덱스
-	int right; 
+	int right;
 	int temp = 0;
-	
+
 	//원소가 1개인 경우
 	if (start >= end)
 		return;
 
 	pivot = start;
-	left = start+1;
-	right = end;	
-	
+	left = start + 1;
+	right = end;
+
 	//pivot 인덱스 값을 기준으로 큰 값을 찾는 left인덱스와 작은 값을 찾는 right인덱스가 엇갈릴 때까지
-	while(left <= right)
+	while (left <= right)
 	{
-		while ( ( arr[left] <= arr[pivot] ) && (left <= end))
+		while ((arr[left] <= arr[pivot]) && (left <= end))
 		{
 			left++;
 		}
-	
-		while ( ( arr[right] >= arr[pivot] ) && (right > start))
+
+		while ((arr[right] >= arr[pivot]) && (right > start))
 		{
 			right--;
 		}
 
-		if(left <= right){
+		if (left <= right) {
 			temp = arr[left];
 			arr[left] = arr[right];
 			arr[right] = temp;
@@ -159,4 +182,59 @@ void quickSort(int* arr, int start, int end) {
 
 	quickSort(arr, start, pivot - 1);
 	quickSort(arr, pivot + 1, end);
+}
+
+
+int tempArr[10];
+
+void merge(int* arr, int start, int mid, int end)
+{
+	int i, j, k;
+	int t;
+	i = start;
+	j = mid + 1;
+	k = start;
+	while ((i <= mid) && (j <= end))
+	{
+		if (arr[i] <= arr[j])
+		{
+			tempArr[k++] = arr[i];
+			i++;
+		}
+		else
+		{
+			tempArr[k++] = arr[j];
+			j++;
+		}
+	}
+
+	if (i > mid)
+	{
+		for (t = j; t <= end; t++)
+			tempArr[k++] = arr[t];
+	}
+	else
+	{
+		for (t = i; t <= mid; t++)
+			tempArr[k++] = arr[t];
+	}
+
+	for (t = start; t <= end; t++)
+	{
+		arr[t] = tempArr[t];
+	}
+}
+
+void mergeSort(int* arr, int start, int end)
+{
+	int mid = 0;
+
+	if (start < end)
+	{
+		mid = (start + end) / 2;
+		mergeSort(arr, start, mid);
+		mergeSort(arr, mid + 1, end);
+		merge(arr, start, mid, end);
+	}
+
 }
